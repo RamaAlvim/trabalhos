@@ -79,6 +79,42 @@ public:
 	{
 	}//-------------------------------------------------------------------
 
+	//
+	// imprime numero de arestas
+	//
+	void imprimeNumArestas()
+	{
+		int numArestas=0;
+		for(int i=0;i<numVertice;i++)
+		{
+			numArestas=numArestas+getGrau(i);
+
+		}
+		numArestas=numArestas/2;
+		cout<<"Numero de arestas: "<<numArestas<<endl;
+	}
+	//
+
+	//
+	// imprime numero de vertices
+	//
+	void imprimeNumVertices()
+	{
+		cout<<"Numero de vertices: "<<numVertice<<endl;
+	}
+	//
+
+	//
+	// imprimeNumVerticeAresta
+	//
+	void imprimeNumVerticeAresta()
+	//
+	{
+		imprimeNumArestas();
+		imprimeNumVertices();
+
+
+	}
 
 	//--------------------------------------------------------------------
 	// lerGrafo: Realiza a leitura do grafo no arquivo.
