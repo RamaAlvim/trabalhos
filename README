@@ -1,1 +1,29 @@
 pasta de trabalhos compartilhados
+
+
+Em editor, rode o arquivo run.sh para executar o software e ler a matriz.
+
+A entrada padrão é o arquivo grafos1.
+
+
+Metodos disponiveis:
+
+imprimirGrauVertice
+imprimirIsGrafoNulo
+imprimirIsPendente
+caixeiro -->viajante
+buscaProfunda -->visite
+buscaLargura -->percorreLargura
+inserirAresta
+getGrau
+isGrafoNulo
+isPendente
+isAresta
+isEuleriano
+isUnicursal
+isConexo
+getAresta
+excluirAresta
+excluirTodasArestas
+setNumVertice
+imprimirVerticeAresta 
