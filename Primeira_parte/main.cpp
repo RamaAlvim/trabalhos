@@ -82,6 +82,17 @@ public:
 	//
 	// imprime numero de arestas
 	//
+
+	void imprimeBipartite()
+	{
+		if(isBipartite())
+		{
+			cout<<"bipartido"<<endl;
+		}
+		else
+		{cout<<"não é bipartido"<<endl;}
+
+	}
 	void imprimeNumArestas()
 	{
 		int numArestas=0;
@@ -559,6 +570,14 @@ private:
 	//--------------------------------------------------------------------
 	// isGrafoNulo: Retorna true se o grafo for nulo.
 	//--------------------------------------------------------------------
+
+
+
+
+
+	//--------------------------------------------------------------------
+	// isGrafoNulo: Retorna true se o grafo for nulo.
+	//--------------------------------------------------------------------
 	bool isGrafoNulo()
 	{
 		bool resp = true;
@@ -603,10 +622,49 @@ private:
 
 	//--------------------------------------------------------------------
 	// isBipartite: Retorna true se o grafo é bipartite.
-	//----------------------------------------------gra----------------------
+	//----------------------------------------------------------------------
+//TODO
+	bool isBipartite()
+	{
+		bool resp=isBipartite(0);
+		return resp;
 
-//	bool isBipartite()
-//	{	}
+	}
+
+	bool isBipartite(int vert)
+	{
+		int colorARR[numVertice];
+
+		for(int i=0;i<numVertice;i++)
+		{
+			colorARR[i]=-1;
+		}
+		colorARR[vert]=1;
+
+		queue <int> q;
+
+		q.push(vert);
+
+		while(!q.empty())
+		{
+			int u=q.front();
+			q.pop();
+
+			for(int v=0;v<numVertice;v++)
+			{
+				if(isAresta(u,v) && colorARR[v]==-1)
+				{
+					colorARR[v]=1 - colorARR[u];
+					q.push(v);
+				}
+				else if(isAresta(u,v) && colorARR[v] == colorARR[u])
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
 	//-------------------------------------------------------------------
 
@@ -723,8 +781,8 @@ private:
 	//--------------------------------------------------------------------
 	// isConexo: Retorna true se o grafo for conexo.
 	//--------------------------------------------------------------------
-
-	bool isConexo()
+//TODO
+ bool isConexo()
 	{
 		bool resp = true;
 		return true;
@@ -835,7 +893,7 @@ int main(int argc, char **argv)
 		//g->caixeiro();
 		//g->buscaProfunda();
 		//g->buscaLargura();
-		g->imprimeInfoGrafo();
+		g->imprimeBipartite();
 		delete g;
 		g = new Grafo;
 	}

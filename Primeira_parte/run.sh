@@ -1,2 +1,2 @@
 #/bin/bash
-./Debug/editor_grafo < grafo1
+./Debug/editor_grafo < entradaPadrao.in
