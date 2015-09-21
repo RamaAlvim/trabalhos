@@ -873,6 +873,10 @@ public:
 	}
 };
 
+class GrafoLista : public Grafo {
+	
+};
+
 
 //=====================================================================
 // FUNCAO PRINCIPAL
