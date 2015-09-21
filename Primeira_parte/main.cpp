@@ -145,6 +145,17 @@ public:
 		return resp;
 	}//-------------------------------------------------------------------
 
+	///
+	///
+	///
+	/*grafo* getAG()
+	{
+		grafo
+
+	}
+*/
+
+	///
 
 	//--------------------------------------------------------------------
 	// imprimir: Imprime o grafo.
@@ -206,6 +217,27 @@ public:
 	//--------------------------------------------------------------------
 
 	//--------------------------------------------------------------------
+	// imprimeInfoGrafo: Imprime uma linha indicando se o grafo  Simples, regular, nulo, completo, euleriano e unicursal.
+	//--------------------------------------------------------------------
+	void imprimeInfoGrafo()
+	{
+		//simples
+
+		//regular
+		if(isRegular())
+		{cout<<"Regular"<<endl;}
+		//nulo
+		if(isGrafoNulo())
+		{cout<<"Nulo"<<endl;}
+		//completo
+
+		//euleriano
+		if(isEuleriano())
+		{cout<<"Euleriano"<<endl;}
+		//unicursal
+
+	}
+	//--------------------------------------------------------------------
 	// imprimirIsGrafoNulo: imprime nulo se o grafo for nulo
 	//--------------------------------------------------------------------
 	void imprimirIsGrafoNulo()
@@ -227,6 +259,15 @@ public:
 		std::swap( q, empty );
 	}
     //--------------------------------------------------------------------
+
+	//--------------------------------------------------------------------
+	// imprimirIsPendente: imprime se o vertice eh pendente
+	//--------------------------------------------------------------------
+
+
+	//--------------------------------------------------------------------
+
+
 
 	//--------------------------------------------------------------------
 	// imprimirIsPendente: imprime se o vertice eh pendente
@@ -597,25 +638,46 @@ private:
 	{
 		return (matriz[v1][v2] != NULO);
 	}//-------------------------------------------------------------------
+	bool isRegular()
+	{
+		int grau=0;
+		bool resp= 1;
+		for(int i =0;i<numVertice&&resp==1;i++)
+		{
+			if(i==0)
+			{
+				grau=getGrau(i);
+			}
+			else
+			{
+				if(resp != getGrau(i))
+				{
+					resp=0;
+				}
+			}
+		}
+		return resp;
+	}
+
 
 	//--------------------------------------------------------------------
 	// isEuleriano: Retorna true se o grafo for Euleriano.
 	//--------------------------------------------------------------------
 	bool isEuleriano()
 	{
-		bool resp = false;
+		bool resp = 1;
 		if (isConexo() == true)
 		{
-			for (int i = 1; i < numVertice; i++)
+			for (int i = 1; i < numVertice && resp!=0; i++)
 			{
-				if (getGrau(i) % 2 != 0)
+				if (getGrau(i) % 2 == 1)
 				{
-					resp = false;
-					i = numVertice;
+					resp = 0;
 				}
 			}
 
 		}
+
 		return resp;
 
 	}
@@ -771,8 +833,9 @@ int main(int argc, char **argv)
 		//g->imprimirIsGrafoNulo();
 		// g->imprimirIsPendente();
 		//g->caixeiro();
-		g->buscaProfunda();
+		//g->buscaProfunda();
 		//g->buscaLargura();
+		g->imprimeInfoGrafo();
 		delete g;
 		g = new Grafo;
 	}
