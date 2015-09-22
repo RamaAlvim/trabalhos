@@ -55,7 +55,7 @@ struct nodeDist
 //=====================================================================
 class Grafo
 {
-private:
+protected:
 	int numVertice, numAresta;
 	int counter=0;
 
@@ -65,102 +65,129 @@ public:
 		excluirTodasArestas();
 	}
 
+	virtual void excluirTodasArestas(){;}
+	virtual void setNumVertice(int nVertice) = 0;
+	virtual void inserirAresta(Vertice v1, Vertice v2, Peso peso) = 0;
+	virtual bool isBipartite() = 0;
+	virtual bool isRegular() = 0;
+	virtual bool isEuleriano() = 0;
+	virtual bool isGrafoNulo() = 0;
+	virtual int getGrau(int v) = 0;
+
+	//--------------------------------------------------------------------
+	// lerGrafo: Realiza a leitura do grafo no arquivo.
+	//--------------------------------------------------------------------
+	boolean lerGrafo()
+	{
+		boolean resp;
+		int temp;
+
+		excluirTodasArestas();
+
+		//Ler o numero de vertices
+		cin >> temp;
+		setNumVertice(temp);
+
+		resp = (numVertice > 0) ? true : false;
+
+		for (int i = 0; i < numVertice; i++)
+		{
+			inserirAresta(i, i, NULO);
+			for (int j = i + 1; j < numVertice; j++)
+			{
+				cin >> temp;
+				inserirAresta(i, j, temp);
+				inserirAresta(j, i, temp);
+			}
+		}
+		return resp;
+	}
+
+	void imprimeBipartite()
+	{
+		if(isBipartite())
+		{
+			cout<<"bipartido"<<endl;
+		}
+		else
+			{cout<<"não é bipartido"<<endl;}
+
+	}
+
+	void imprimeNumArestas()
+	{
+		int numArestas=0;
+		for(int i=0;i<numVertice;i++)
+		{
+			numArestas=numArestas+getGrau(i);
+
+		}
+		numArestas=numArestas/2;
+		cout<<"Numero de arestas: "<<numArestas<<endl;
+	}
+
+	//
+	// imprime numero de vertices
+	//
+	void imprimeNumVertices()
+	{
+		cout<<"Numero de vertices: "<<numVertice<<endl;
+	}
+
+	//
+	// imprimeNumVerticeAresta
+	//
+	void imprimeNumVerticeAresta()
+	{
+		imprimeNumArestas();
+		imprimeNumVertices();
+	}
+
+	//--------------------------------------------------------------------
+	// imprimirGrauVertice: imprime grau de um vertice.
+	//--------------------------------------------------------------------
+	void imprimirGrauVertice(int v)
+	{
+		cout << getGrau(v) << endl;
+	}
+
+	//--------------------------------------------------------------------
+	// imprimeInfoGrafo: Imprime uma linha indicando se o grafo  Simples, regular, nulo, completo, euleriano e unicursal.
+	//--------------------------------------------------------------------
+	void imprimeInfoGrafo()
+	{
+		//simples
+		//TODO: isSimples
+
+		//regular
+		if(isRegular())
+			{cout<<"Regular"<<endl;}
+
+		//nulo
+		if(isGrafoNulo())
+			{cout<<"Nulo"<<endl;}
+
+		//completo
+		//TODO: isCompleto
+
+		//euleriano
+		if(isEuleriano())
+			{cout<<"Euleriano"<<endl;}
+
+		//unicursal
+		//TODO: isUnicursal
+	}
 };
 
-class GrafoMat : public Grafo
+//=====================================================================
+// CLASSE GRAFO POR MATRIZ DE ARESTAS
+//=====================================================================
+class GrafoMat : virtual public Grafo
 {
 private:	
 	Peso matriz[MAX_VERTICE][MAX_VERTICE];
 
 public:
-	//
-	// imprime numero de arestas
-	//
-
-		void imprimeBipartite()
-		{
-			if(isBipartite())
-			{
-				cout<<"bipartido"<<endl;
-			}
-			else
-				{cout<<"não é bipartido"<<endl;}
-
-		}
-		void imprimeNumArestas()
-		{
-			int numArestas=0;
-			for(int i=0;i<numVertice;i++)
-			{
-				numArestas=numArestas+getGrau(i);
-
-			}
-			numArestas=numArestas/2;
-			cout<<"Numero de arestas: "<<numArestas<<endl;
-		}
-	//
-
-	//
-	// imprime numero de vertices
-	//
-		void imprimeNumVertices()
-		{
-			cout<<"Numero de vertices: "<<numVertice<<endl;
-		}
-	//
-
-	//
-	// imprimeNumVerticeAresta
-	//
-		void imprimeNumVerticeAresta()
-	//
-		{
-			imprimeNumArestas();
-			imprimeNumVertices();
-
-
-		}
-
-	//--------------------------------------------------------------------
-	// lerGrafo: Realiza a leitura do grafo no arquivo.
-	//--------------------------------------------------------------------
-		boolean lerGrafo()
-		{
-			boolean resp;
-			int temp;
-
-			excluirTodasArestas();
-
-		//Ler o numero de vertices
-			cin >> temp;
-			setNumVertice(temp);
-
-			resp = (numVertice > 0) ? true : false;
-
-			for (int i = 0; i < numVertice; i++)
-			{
-				inserirAresta(i, i, NULO);
-				for (int j = i + 1; j < numVertice; j++)
-				{
-					cin >> temp;
-					inserirAresta(i, j, temp);
-					inserirAresta(j, i, temp);
-				}
-			}
-			return resp;
-	}//-------------------------------------------------------------------
-
-	///
-	///
-	///
-	/*grafo* getAG()
-	{
-		grafo
-
-	}
-*/
-
-	///
 
 	//--------------------------------------------------------------------
 	// imprimir: Imprime o grafo.
@@ -212,37 +239,7 @@ public:
 		printf("\n");
 	}//-------------------------------------------------------------------
 
-	//--------------------------------------------------------------------
-	// imprimirGrauVertice: imprime grau de um vertice.
-	//--------------------------------------------------------------------
-	void imprimirGrauVertice(int v)
-	{
-		cout << getGrau(v) << endl;
-	}
-	//--------------------------------------------------------------------
 
-	//--------------------------------------------------------------------
-	// imprimeInfoGrafo: Imprime uma linha indicando se o grafo  Simples, regular, nulo, completo, euleriano e unicursal.
-	//--------------------------------------------------------------------
-	//TODO:
-	void imprimeInfoGrafo()
-	{
-		//simples
-
-		//regular
-		if(isRegular())
-			{cout<<"Regular"<<endl;}
-		//nulo
-		if(isGrafoNulo())
-			{cout<<"Nulo"<<endl;}
-		//completo
-
-		//euleriano
-		if(isEuleriano())
-			{cout<<"Euleriano"<<endl;}
-		//unicursal
-
-	}
 	//--------------------------------------------------------------------
 	// imprimirIsGrafoNulo: imprime nulo se o grafo for nulo
 	//--------------------------------------------------------------------
@@ -294,60 +291,63 @@ public:
 	{
 		int temp=counter;
 
-	 //vetor visitados
+	 	//vetor visitados
 
 
 		//i = vertice atual
 		//for --> para cada vertice atual
 		for(int i=0;i<numVertice;i++)
-			{counter = 0;
-				boolean *visi=new boolean[numVertice];
-			//marca todos como nao visitados
-				for(int i=0;i<numVertice;i++)
-				{
-					visi[i]=false;
-				}
-				int menor=MAX_INT;
-	//começar aqui a classe
-				viajante(visi,menor,i);
-
-			}
-	//	cout<<counter<<endl;
-			counter=temp;
-		}
-		void viajante(boolean visi[],int menor,int vAtual)
-{	//descubra aresta com menor peso conectada ao vertice atual
-	// e a um vertice nao visitado
-
-	if(visi[vAtual]==false)
-	{
-		visi[vAtual] = true;
-		counter++;
-
-	}
-	//cout<<vAtual<<endl;
-	int menorV=-1;
-	for(int j=0;j<numVertice;j++)
-	{//procura pelos vertices conectados aos atuais que não tenham sido visitados
-		if(isAresta(vAtual,j)==true && visi[j]==false)
 		{
-			if(getAresta(vAtual,j)<menor)
+			counter = 0;
+			boolean *visi=new boolean[numVertice];
+			//marca todos como nao visitados
+			for(int j=0;j<numVertice;j++)
 			{
-				menor = getAresta(vAtual,j);
+				visi[j]=false;
+			}
+			int menor=MAX_INT;
+			//começar aqui a classe
+			viajante(visi,menor,i);
+		}
+	//	cout<<counter<<endl;
+		counter=temp;
+	}
 
-				menorV=j;
-				cout<<menorV<<endl;
-				visi[menorV]=true;
-				counter++;
-				if(counter<=numVertice)
+	void viajante(boolean visi[],int menor,int vAtual)
+	{
+		//descubra aresta com menor peso conectada ao vertice atual
+		// e a um vertice nao visitado
+
+		if(visi[vAtual]==false)
+		{
+			visi[vAtual] = true;
+			counter++;
+
+		}
+			//cout<<vAtual<<endl;
+		int menorV=-1;
+		for(int j=0;j<numVertice;j++)
+		{
+			//procura pelos vertices conectados aos atuais que não tenham sido visitados
+			if(isAresta(vAtual,j)==true && visi[j]==false)
+			{
+				if(getAresta(vAtual,j)<menor)
 				{
-					viajante(visi,menor,j);
-				}
+					menor = getAresta(vAtual,j);
 
+					menorV=j;
+					cout<<menorV<<endl;
+					visi[menorV]=true;
+					counter++;
+					if(counter<=numVertice)
+					{
+						viajante(visi,menor,j);
+					}
+
+				}
 			}
 		}
 	}
-}
 
 
 
@@ -881,7 +881,7 @@ class GrafoLista : virtual public Grafo {
 int main(int argc, char **argv)
 {
 
-	Grafo *g = new Grafo;
+	GrafoMat *g = new GrafoMat;
 
 	while (g->lerGrafo() == true)
 	{
@@ -896,7 +896,7 @@ int main(int argc, char **argv)
 		//g->buscaLargura();
 		g->imprimeBipartite();
 		delete g;
-		g = new Grafo;
+		g = new GrafoMat;
 	}
 
 	delete g;
