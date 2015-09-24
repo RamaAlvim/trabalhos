@@ -177,6 +177,18 @@ public:
 		//unicursal
 		//TODO: isUnicursal
 	}
+
+	//--------------------------------------------------------------------
+	// imprimirIsGrafoNulo: imprime nulo se o grafo for nulo
+	//--------------------------------------------------------------------
+	void imprimirIsGrafoNulo()
+	{
+		if (isGrafoNulo() == 1)
+		{
+			cout << "grafo nulo" << endl;
+		} else
+		{ cout << "grafo nao nulo" << endl; }
+	}
 };
 
 //=====================================================================
@@ -226,12 +238,12 @@ public:
 
 			for (j = 0; j < numVertice; j++)
 			{
-				if (matriz[i][j] == NULO)
+				if (getAresta(i, j) == NULO)
 				{
 					printf("\t. ");
 				} else
 				{
-					printf("\t%i ", matriz[i][j]);
+					printf("\t%i ", getAresta(i, j));
 				}
 			}
 		}
@@ -239,18 +251,6 @@ public:
 		printf("\n");
 	}//-------------------------------------------------------------------
 
-
-	//--------------------------------------------------------------------
-	// imprimirIsGrafoNulo: imprime nulo se o grafo for nulo
-	//--------------------------------------------------------------------
-	void imprimirIsGrafoNulo()
-	{
-		if (isGrafoNulo() == 1)
-		{
-			cout << "grafo nulo" << endl;
-		} else
-		{ cout << "grafo nao nulo" << endl; }
-	}
 	//--------------------------------------------------------------------
 	//--------------------------------------------------------------------
 	//clear: limpa fila
@@ -544,7 +544,7 @@ void buscaLargura()
 		int i = 0;
 		for (i = 0; i < numVertice; i++)
 		{
-			if (matriz[i][v] != -1)
+			if (getAresta(i, v) != -1)
 			{
 				grau++;
 			}
@@ -725,9 +725,9 @@ private:
 			return;
 		}
 
-		if (matriz[v1][v2] == NULO)
+		if (getAresta(v1, v2) == NULO)
 		{
-			matriz[v1][v2] = peso;
+			setAresta(v1, v2, peso);
 			numAresta++;
 		}
 	}//-------------------------------------------------------------------
@@ -741,7 +741,7 @@ private:
 		int i = 0;
 		for (i = 0; i < numVertice; i++)
 		{
-			if (matriz[i][v] != -1)
+			if (getAresta(i, v) != -1)
 			{
 				grau++;
 				// cout <<grau<<endl;
@@ -756,10 +756,9 @@ private:
 
 
 
-
-
-
-
+	void setAresta(Vertice v1, Vertice v2, Peso p){
+		matriz[v1][v2] = p;
+	}
 
 	//--------------------------------------------------------------------
 	// isIsomorfos: Retorna true se existe a aresta.
@@ -786,7 +785,7 @@ private:
 	//--------------------------------------------------------------------
 	boolean isAresta(Vertice v1, Vertice v2)
 	{
-		return (matriz[v1][v2] != NULO);
+		return (getAresta(v1, v2) != NULO);
 	}//-------------------------------------------------------------------
 
 
@@ -796,11 +795,8 @@ private:
 	//--------------------------------------------------------------------
 	Peso getAresta(Vertice v1, Vertice v2)
 	{
-		return (matriz[v1][v2]);
+		return (getAresta(v1, v2));
 	}//-------------------------------------------------------------------
-
-
-
 
 
 	//--------------------------------------------------------------------
@@ -821,9 +817,9 @@ private:
 			return;
 		}
 
-		if (matriz[v1][v2] != NULO)
+		if (getAresta(v1, v2) != NULO)
 		{
-			matriz[v1][v2] = NULO;
+			setAresta(v1, v2, NULO);
 			numAresta--;
 		}
 	}//-------------------------------------------------------------------
@@ -837,10 +833,11 @@ private:
 	{
 		for (int i = 0; i < MAX_VERTICE; i++)
 		{
-			matriz[i][i] = NULO;
+			setAresta(i, i, NULO);
 			for (int j = i + 1; j < MAX_VERTICE; j++)
 			{
-				matriz[i][j] = matriz[j][i] = NULO;
+				setAresta(i, j, NULO);
+				setAresta(j, i, NULO);
 			}
 		}
 		numAresta = 0;
