@@ -66,8 +66,8 @@ public:
 	}
 
 	//Metodos nao compartilhados - implementados nas classes que herdam de Grafo.
-	virtual void setAresta(Vertice v1, Vertice v2, Peso p) = 0;
-	virtual Peso getAresta(Vertice v1, Vertice v2)= 0;
+	virtual void setAresta(Vertice v1, Vertice v2, Peso p){;}
+	virtual Peso getAresta(Vertice v1, Vertice v2){;}
 
 	//--------------------------------------------------------------------
 	// lerGrafo: Realiza a leitura do grafo no arquivo.
