@@ -65,14 +65,9 @@ public:
 		excluirTodasArestas();
 	}
 
-	virtual void excluirTodasArestas(){;}
-	virtual void setNumVertice(int nVertice) = 0;
-	virtual void inserirAresta(Vertice v1, Vertice v2, Peso peso) = 0;
-	virtual bool isBipartite() = 0;
-	virtual bool isRegular() = 0;
-	virtual bool isEuleriano() = 0;
-	virtual bool isGrafoNulo() = 0;
-	virtual int getGrau(int v) = 0;
+	//Metodos nao compartilhados - implementados nas classes que herdam de Grafo.
+	virtual void setAresta(Vertice v1, Vertice v2, Peso p) = 0;
+	virtual Peso getAresta(Vertice v1, Vertice v2)= 0;
 
 	//--------------------------------------------------------------------
 	// lerGrafo: Realiza a leitura do grafo no arquivo.
@@ -189,21 +184,81 @@ public:
 		} else
 		{ cout << "grafo nao nulo" << endl; }
 	}
-};
-
-//=====================================================================
-// CLASSE GRAFO POR MATRIZ DE ARESTAS
-//=====================================================================
-class GrafoMat : virtual public Grafo
-{
-private:	
-	Peso matriz[MAX_VERTICE][MAX_VERTICE];
-
-public:
 
 	//--------------------------------------------------------------------
-	// imprimir: Imprime o grafo.
+	//  bool isPendente: retorna true se o vertice for pendente.
 	//--------------------------------------------------------------------
+	bool isPendente(int v)
+	{
+		int grau = 0;
+		int i = 0;
+		for (i = 0; i < numVertice; i++)
+		{
+			if (getAresta(i, v) != -1)
+			{
+				grau++;
+			}
+		}
+		if (grau == 1)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}//-------------------------------------------------------------------
+
+	//--------------------------------------------------------------------
+	// isAresta: Retorna true se existe a aresta.
+	//--------------------------------------------------------------------
+	boolean isAresta(Vertice v1, Vertice v2)
+	{
+		return (getAresta(v1, v2) != NULO);
+	}
+
+	//--------------------------------------------------------------------
+	// excluirAresta: Exclui uma aresta.
+	//--------------------------------------------------------------------
+	void excluirAresta(Vertice v1, Vertice v2)
+	{
+
+		if (v1 > numVertice)
+		{
+			printf("ERRO! Vertice %i nao existe no grafo", v1);
+			return;
+		}
+
+		if (v2 > numVertice)
+		{
+			printf("ERRO! Vertice %i nao existe no grafo", v2);
+			return;
+		}
+
+		if (getAresta(v1, v2) != NULO)
+		{
+			setAresta(v1, v2, NULO);
+			numAresta--;
+		}
+	}
+
+	//--------------------------------------------------------------------
+	// excluirTodasArestas: Exclui todas as arestas.
+	//--------------------------------------------------------------------
+	void excluirTodasArestas()
+	{
+		for (int i = 0; i < MAX_VERTICE; i++)
+		{
+			setAresta(i, i, NULO);
+			for (int j = i + 1; j < MAX_VERTICE; j++)
+			{
+				setAresta(i, j, NULO);
+				setAresta(j, i, NULO);
+			}
+		}
+		numAresta = 0;
+	}//-------------------------------------------------------------------
+
 	void imprimir()
 	{
 		int i = 0, j = 0;
@@ -249,28 +304,16 @@ public:
 		}
 
 		printf("\n");
-	}//-------------------------------------------------------------------
+	}
 
-	//--------------------------------------------------------------------
 	//--------------------------------------------------------------------
 	//clear: limpa fila
-
 	//--------------------------------------------------------------------
 	void clearQueue( std::queue<int> &q )
 	{
 		std::queue<int> empty;
 		std::swap( q, empty );
 	}
-    //--------------------------------------------------------------------
-
-	//--------------------------------------------------------------------
-	// imprimirIsPendente: imprime se o vertice eh pendente
-	//--------------------------------------------------------------------
-
-
-	//--------------------------------------------------------------------
-
-
 
 	//--------------------------------------------------------------------
 	// imprimirIsPendente: imprime se o vertice eh pendente
@@ -285,13 +328,12 @@ public:
 			cout << "vertice nao pendente" << endl;
 		}
 	}
-	//--------------------------------------------------------------------
 
 	void caixeiro()
 	{
 		int temp=counter;
 
-	 	//vetor visitados
+		//vetor visitados
 
 
 		//i = vertice atual
@@ -309,7 +351,7 @@ public:
 			//começar aqui a classe
 			viajante(visi,menor,i);
 		}
-	//	cout<<counter<<endl;
+		//cout<<counter<<endl;
 		counter=temp;
 	}
 
@@ -343,121 +385,96 @@ public:
 					{
 						viajante(visi,menor,j);
 					}
-
 				}
 			}
 		}
 	}
 
-
-
-    //--------------------------------------------------------------------
-    //buscaProfunda: inicia a busca em profundidade do grafo
-    //--------------------------------------------------------------------
-
-void buscaProfunda()
-{
-	boolean *visitado = new boolean[numVertice];
-	deque <nodeDist> caminho;
+	//--------------------------------------------------------------------
+	//buscaProfunda: inicia a busca em profundidade do grafo
+	//--------------------------------------------------------------------
+	void buscaProfunda()
+	{
+		boolean *visitado = new boolean[numVertice];
+		deque <nodeDist> caminho;
 		//marcar cada vertice como não visitado
-	for(int i = 0; i < numVertice; i++){
-		visitado[i] = false;
-	}
+		for(int i = 0; i < numVertice; i++){
+			visitado[i] = false;
+		}
 
 		//para cada vertice não visitado, faça um visite(v)
-	for(int i = 0; i < numVertice; i++){
-		if(visitado[i] == false)
-		{
-
-			visite(i, visitado,caminho,0);
-
+		for(int i = 0; i < numVertice; i++){
+			if(visitado[i] == false)
+			{
+				visite(i, visitado,caminho,0);
+			}
 		}
 
 	}
 
-}
-	//--------------------------------------------------------------------
 	//--------------------------------------------------------------------
 	//buscaProfunda: realiza a busca em profundidade do grafo
 	//--------------------------------------------------------------------
-void visite (Vertice v1, boolean visitado[], deque<nodeDist> &cam,int dist0)
-{
-	int dist=0;
-
+	void visite (Vertice v1, boolean visitado[], deque<nodeDist> &cam,int dist0)
+	{
+		int dist=0;
 
 		//cout<<"tamanho "<<cam.size()<<endl;
-	int i;
-	visitado[v1]=true;
+		int i;
+		visitado[v1]=true;
 		//cout<<v1<<endl;
-	for(i = 0; i < numVertice; i++)
-	{
-		if(isAresta(v1, i) == true && visitado[i]==false && counter<numVertice)
+		for(i = 0; i < numVertice; i++)
 		{
-			cam.push_back(nodeDist(v1,getAresta(v1, i)));
-			counter++;
-			dist = getAresta(v1, i) + dist0;
+			if(isAresta(v1, i) == true && visitado[i]==false && counter<numVertice)
+			{
+				cam.push_back(nodeDist(v1,getAresta(v1, i)));
+				counter++;
+				dist = getAresta(v1, i) + dist0;
 
 				//	visitado[i] = true;
-			visite(i, visitado, cam, dist);
-
-
+				visite(i, visitado, cam, dist);
+			}
 		}
-
-
+		counter--;
+		visitado[i]=false;
+		cam.pop_back();
 	}
-	counter--;
-	visitado[i]=false;
-	cam.pop_back();
-
-
-}
-	//--------------------------------------------------------------------
-
-
-
-
-
 
 	//--------------------------------------------------------------------
 	//printVisitados: inicia a busca em profundidade do grafo
    //--------------------------------------------------------------------
-void printVisitados(int visitados[])
-{
-	int x=0;
-	for (int i = 0; i <numVertice ; ++i)
+	void printVisitados(int visitados[])
 	{
-		    //nao-visitados = -1
-		    //na fila
-		x=visitados[i];
+		int x=0;
+		for (int i = 0; i <numVertice ; ++i)
+		{
+			//nao-visitados = -1
+			//na fila
+			x=visitados[i];
 
-		cout<< x<< " ";
-
+			cout<< x<< " ";
+		}
+		cout << endl;
 	}
-	cout << endl;
-}
 
-
-
-void printFila( queue<int> &q )
-{
-	for (int i = 0; i <q.size() ; ++i)
+	void printFila( queue<int> &q )
 	{
-		int x = q.front();
-		q.pop();
+		for (int i = 0; i <q.size() ; ++i)
+		{
+			int x = q.front();
+			q.pop();
 
-		cout <<x<< " ";
-		q.push(x);
+			cout <<x<< " ";
+			q.push(x);
+		}
+		cout<<endl;
 	}
-	cout<<endl;
-}
-
 
 	//--------------------------------------------------------------------
 	//buscaLargura: inicia a busca em largura do grafo
 	//--------------------------------------------------------------------
-void buscaLargura()
-{
-
+	void buscaLargura()
+	{
 		int *visitados = new int[numVertice];//para ser usado em busca em largura
 		queue <int> fila;
 		counter=-1;
@@ -473,90 +490,61 @@ void buscaLargura()
 				percorreLargura(0,visitados,fila);
 			}
 		}
-
-
-
 	}
-    //--------------------------------------------------------------------
 
-    //--------------------------------------------------------------------
-    //percorreLargura: percorre a busca em largura
-    //--------------------------------------------------------------------
+	//--------------------------------------------------------------------
+	//percorreLargura: percorre a busca em largura
+	//--------------------------------------------------------------------
 	void percorreLargura(int u,int visitados[], queue<int> &fila)
 	{
 
-	    fila.push(u);//vertice recebido na para o fim da fila
+		fila.push(u);//vertice recebido na para o fim da fila
 
-	    while(!fila.empty())
-	    {
-		    int v= fila.front();//lê item da frente da fila
-		    fila.pop();//remove item da frente da fila
-		    cout << v << " ";
-		    if(visitados[v]!=-1)
-		    {
-		    	continue;
-		    }
-		    else
-		    	{ counter++;
-		    		visitados[v] = counter;}
+		while(!fila.empty())
+		{
+			int v= fila.front();//lê item da frente da fila
+			fila.pop();//remove item da frente da fila
+			cout << v << " ";
+			if(visitados[v]!=-1)
+			{
+				continue;
+			}
+			else
+			{
+				counter++;
+				visitados[v] = counter;
+			}
 
-		    		for (int i = 0; i < numVertice; ++i)
-		    		{
-		    			if (isAresta(v,i)==1)
-		    			{
-		    				if(visitados[i]==-1)
-		    				{
-		    					fila.push(i);
-		    				}
-		    			}
-		    		}
+			for (int i = 0; i < numVertice; ++i)
+			{
+				if (isAresta(v,i)==1)
+				{
+					if(visitados[i]==-1)
+					{
+						fila.push(i);
+					}
+				}
+			}
+		}
+	}
 
-
-		    	}
-
-		    }
 	//--------------------------------------------------------------------
 	// isGrafoNulo: Retorna true se o grafo for nulo.
 	//--------------------------------------------------------------------
-		    bool isGrafoNulo()
-		    {
-		    	bool resp = true;
-		    	for (int i = 0; i < numVertice && resp==true; i++)
-		    	{
-		    		for(int j=0;j<numVertice&&resp == true; j++)
-		    		{
-		    			if(getAresta(i,j)!=NULO)
-		    			{
-		    				resp=false;
-		    			}
-		    		}
-		    	}
-
-		    	return resp;
-	}//-------------------------------------------------------------------
-
-	//--------------------------------------------------------------------
-	//  bool isPendente: retorna true se o vertice for pendente.
-	//--------------------------------------------------------------------
-	bool isPendente(int v)
+	bool isGrafoNulo()
 	{
-		int grau = 0;
-		int i = 0;
-		for (i = 0; i < numVertice; i++)
+		bool resp = true;
+		for (int i = 0; i < numVertice && resp==true; i++)
 		{
-			if (getAresta(i, v) != -1)
+			for(int j=0;j<numVertice&&resp == true; j++)
 			{
-				grau++;
+				if(getAresta(i,j)!=NULO)
+				{
+					resp=false;
+				}
 			}
 		}
-		if (grau == 1)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return resp;
 	}//-------------------------------------------------------------------
 
 	//--------------------------------------------------------------------
@@ -605,8 +593,6 @@ void buscaLargura()
 		return true;
 	}
 
-	//-------------------------------------------------------------------
-
 	bool isRegular()
 	{
 		int grau=0;
@@ -650,18 +636,7 @@ void buscaLargura()
 		return resp;
 
 	}
-	//--------------------------------------------------------------------
-/**
-	bool isDigrafoRegular()
-	{
 
-	}
-
-	bool isDigrafoBalanceado()
-	{
-
-	}
-*/
 	//--------------------------------------------------------------------
 	// isUnicursal: Retorna true se o grafo for unicursal.
 	//--------------------------------------------------------------------
@@ -685,27 +660,16 @@ void buscaLargura()
 		return resp;
 
 	}
-	//--------------------------------------------------------------------
-
-
 
 	//--------------------------------------------------------------------
 	// isConexo: Retorna true se o grafo for conexo.
 	//--------------------------------------------------------------------
-//TODO
+	//TODO
 	bool isConexo()
 	{
 		bool resp = true;
 		return true;
 	}
-
-
-	//--------------------------------------------------------------------
-
-
-
-
-private:
 
 	//--------------------------------------------------------------------
 	// inserirAresta: Insere uma nova aresta.
@@ -751,101 +715,6 @@ private:
 	}//-------------------------------------------------------------------
 
 	//--------------------------------------------------------------------
-	// isGrafoNulo: Retorna true se o grafo for nulo.
-	//--------------------------------------------------------------------
-
-
-
-	void setAresta(Vertice v1, Vertice v2, Peso p){
-		matriz[v1][v2] = p;
-	}
-
-	//--------------------------------------------------------------------
-	// isIsomorfos: Retorna true se existe a aresta.
-	//----------------------------------------------gra----------------------
-
-
-//	Grafo* getComplementar()
-//	{	}
-	//-------------------------------------------------------------------
-
-
-	//--------------------------------------------------------------------
-	// isIsomorfos: Retorna true se existe a aresta.
-	//----------------------------------------------gra----------------------
-	//  bool isIsomorfos(grafo * g)
-//    {
-	//    return 1;
-//    }
-	//--------------------------------------------------------------------
-
-
-	//--------------------------------------------------------------------
-	// isAresta: Retorna true se existe a aresta.
-	//--------------------------------------------------------------------
-	boolean isAresta(Vertice v1, Vertice v2)
-	{
-		return (getAresta(v1, v2) != NULO);
-	}//-------------------------------------------------------------------
-
-
-
-	//--------------------------------------------------------------------
-	// getAresta: Retorna o peso da aresta.
-	//--------------------------------------------------------------------
-	Peso getAresta(Vertice v1, Vertice v2)
-	{
-		return (getAresta(v1, v2));
-	}//-------------------------------------------------------------------
-
-
-	//--------------------------------------------------------------------
-	// excluirAresta: Exclui uma aresta.
-	//--------------------------------------------------------------------
-	void excluirAresta(Vertice v1, Vertice v2)
-	{
-
-		if (v1 > numVertice)
-		{
-			printf("ERRO! Vertice %i nao existe no grafo", v1);
-			return;
-		}
-
-		if (v2 > numVertice)
-		{
-			printf("ERRO! Vertice %i nao existe no grafo", v2);
-			return;
-		}
-
-		if (getAresta(v1, v2) != NULO)
-		{
-			setAresta(v1, v2, NULO);
-			numAresta--;
-		}
-	}//-------------------------------------------------------------------
-
-
-
-	//--------------------------------------------------------------------
-	// excluirTodasArestas: Exclui todas as arestas.
-	//--------------------------------------------------------------------
-	void excluirTodasArestas()
-	{
-		for (int i = 0; i < MAX_VERTICE; i++)
-		{
-			setAresta(i, i, NULO);
-			for (int j = i + 1; j < MAX_VERTICE; j++)
-			{
-				setAresta(i, j, NULO);
-				setAresta(j, i, NULO);
-			}
-		}
-		numAresta = 0;
-	}//-------------------------------------------------------------------
-
-
-
-	//--------------------------------------------------------------------
 	// setNumVertice: Altera a variavel numVertice.
 	//--------------------------------------------------------------------
 	void setNumVertice(int nVertice)
@@ -860,13 +729,33 @@ private:
 		numVertice = nVertice;
 	}//-------------------------------------------------------------------
 
-public:
 	void imprimirVerticeAresta()
 	{
 		cout << numVertice << " " << numAresta << "\n";
 	}
 };
 
+//=====================================================================
+// CLASSE GRAFO POR MATRIZ DE ARESTAS
+//=====================================================================
+class GrafoMat : virtual public Grafo
+{
+private:	
+	Peso matriz[MAX_VERTICE][MAX_VERTICE];
+
+public:
+	void setAresta(Vertice v1, Vertice v2, Peso p){
+		matriz[v1][v2] = p;
+	}
+
+	Peso getAresta(Vertice v1, Vertice v2){
+		return (matriz[v1][v2]);
+	}
+};
+
+//=====================================================================
+// CLASSE GRAFO POR LISTA DE ARESTAS
+//=====================================================================
 class GrafoLista : virtual public Grafo {
 	
 };
