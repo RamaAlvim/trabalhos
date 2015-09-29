@@ -55,19 +55,19 @@ struct nodeDist
 //=====================================================================
 class Grafo
 {
-protected:
+private:
 	int numVertice, numAresta;
-	int counter=0;
+	int counter;
 
 public:
 	Grafo(){
+		counter = 0;
 		numVertice = 0;
-		excluirTodasArestas();
 	}
 
 	//Metodos nao compartilhados - implementados nas classes que herdam de Grafo.
-	virtual void setAresta(Vertice v1, Vertice v2, Peso p){;}
-	virtual Peso getAresta(Vertice v1, Vertice v2){;}
+	virtual void setAresta(Vertice v1, Vertice v2, Peso p) = 0;
+	virtual Peso getAresta(Vertice v1, Vertice v2) = 0;
 
 	//--------------------------------------------------------------------
 	// lerGrafo: Realiza a leitura do grafo no arquivo.
@@ -738,12 +738,16 @@ public:
 //=====================================================================
 // CLASSE GRAFO POR MATRIZ DE ARESTAS
 //=====================================================================
-class GrafoMat : virtual public Grafo
+class GrafoMat : public Grafo
 {
 private:	
 	Peso matriz[MAX_VERTICE][MAX_VERTICE];
 
 public:
+	GrafoMat() : Grafo() {
+		excluirTodasArestas();
+	}
+
 	void setAresta(Vertice v1, Vertice v2, Peso p){
 		matriz[v1][v2] = p;
 	}
@@ -756,8 +760,21 @@ public:
 //=====================================================================
 // CLASSE GRAFO POR LISTA DE ARESTAS
 //=====================================================================
-class GrafoLista : virtual public Grafo {
-	
+class GrafoLista : public Grafo {
+private:
+
+public:
+	GrafoLista() : Grafo() {
+		excluirTodasArestas();
+	}
+
+	void setAresta(Vertice v1, Vertice v2, Peso p){
+		;
+	}
+
+	Peso getAresta(Vertice v1, Vertice v2){
+		;
+	}
 };
 
 
@@ -767,7 +784,7 @@ class GrafoLista : virtual public Grafo {
 int main(int argc, char **argv)
 {
 
-	GrafoMat *g = new GrafoMat;
+	GrafoMat *g = new GrafoMat();
 
 	while (g->lerGrafo() == true)
 	{
@@ -782,7 +799,7 @@ int main(int argc, char **argv)
 		//g->buscaLargura();
 		g->imprimeBipartite();
 		delete g;
-		g = new GrafoMat;
+		g = new GrafoMat();
 	}
 
 	delete g;
