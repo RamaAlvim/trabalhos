@@ -4,7 +4,14 @@
 * Algoritmos em Grafos
 * Prof. Max do Val Machado
 ************************************************************************/
-
+/*
+*Integrantes:
+*Felipe Ribeiro
+*João Ribeiro
+*Jordan Lyon
+*Rama Alvim
+*
+/
 
 //=====================================================================
 // BIBLIOTECAS
@@ -102,10 +109,10 @@ public:
 	{
 		if(isBipartite())
 		{
-			cout<<"bipartido"<<endl;
+			cout<<"SIM"<<endl;
 		}
 		else
-			{cout<<"não é bipartido"<<endl;}
+			{cout<<"NAO"<<endl;}
 
 	}
 
@@ -118,7 +125,7 @@ public:
 
 		}
 		numArestas=numArestas/2;
-		cout<<"Numero de arestas: "<<numArestas<<endl;
+		cout<<numArestas<<endl;
 	}
 
 	//
@@ -126,16 +133,17 @@ public:
 	//
 	void imprimeNumVertices()
 	{
-		cout<<"Numero de vertices: "<<numVertice<<endl;
+		cout<<numVertice<<" ";
 	}
 
 	//
 	// imprimeNumVerticeAresta
 	//
 	void imprimeNumVerticeAresta()
-	{
-		imprimeNumArestas();
+	{	
 		imprimeNumVertices();
+		imprimeNumArestas();
+		
 	}
 
 	//--------------------------------------------------------------------
@@ -153,24 +161,28 @@ public:
 	{
 		//simples
 		//TODO: isSimples
+	cout<<"SIM"<<" ";
 
 		//regular
 		if(isRegular())
-			{cout<<"Regular"<<endl;}
-
+			{cout<<"SIM"<<" ";}
+		else{cout<<"NAO"<<" ";}
 		//nulo
 		if(isGrafoNulo())
-			{cout<<"Nulo"<<endl;}
-
+			{cout<<"SIM"<<" ";}
+		else{cout<<"NAO"<<" ";}
 		//completo
-		//TODO: isCompleto
-
+		if(isCompleto())
+		{cout<<"SIM"<<" ";}
+		else{cout<<"NAO"<<" ";}
 		//euleriano
 		if(isEuleriano())
-			{cout<<"Euleriano"<<endl;}
-
+			{cout<<"SIM"<<" ";}
+			else{cout<<"NAO"<<" ";}
 		//unicursal
-		//TODO: isUnicursal
+				if(isUnicursal())
+			{cout<<"SIM"<<endl;}
+			else{cout<<"NAO"<<endl;}
 	}
 
 	//--------------------------------------------------------------------
@@ -560,13 +572,15 @@ public:
 
 	bool isBipartite(int vert)
 	{
-		int colorARR[numVertice];
+		int color[numVertice];
+		bool resp =true ;
+		color[vert]=0;
 
-		for(int i=0;i<numVertice;i++)
+		for(int i=1;i<numVertice;i++)
 		{
-			colorARR[i]=-1;
+			color[i]=-1;
 		}
-		colorARR[vert]=1;
+		color[vert]=1;
 
 		queue <int> q;
 
@@ -579,35 +593,65 @@ public:
 
 			for(int v=0;v<numVertice;v++)
 			{
-				if(isAresta(u,v) && colorARR[v]==-1)
+				if(isAresta(u,v) && color[v]==-1)
 				{
-					colorARR[v]=1 - colorARR[u];
+					color[v]=1 - color[u];
 					q.push(v);
 				}
-				else if(isAresta(u,v) && colorARR[v] == colorARR[u])
+				else if(isAresta(u,v) && color[v] == color[u])
 				{
-					return false;
+					resp=false;
 				}
 			}
 		}
-		return true;
+		return resp;
 	}
 
-	bool isRegular()
-	{
-		int grau=0;
-		bool resp= 1;
-		for(int i =0;i<numVertice&&resp==1;i++)
+      boolean isRegular()
 		{
-			if(i==0)
+
+			int grau, aux = 0, x = 0;
+			while(x < numVertice && aux != -1)
 			{
-				grau=getGrau(i);
+				if(x == 0)
+				{
+					grau = getGrau(x);
+				}
+				else
+				{
+					if(grau != getGrau(x))
+					{
+    				  aux = -1;
+					}
+				}
+				x++;
+			}
+			if(aux == -1)
+			{
+				return 0;
 			}
 			else
 			{
-				if(resp != getGrau(i))
-				{
-					resp=0;
+				return 1;
+			}
+      }
+
+
+
+	//--------------------------------------------------------------------
+	// isEuleriano: Retorna true se o grafo for Euleriano.
+	//--------------------------------------------------------------------
+
+
+	bool isCompleto() {
+		// (verificar se todos os vértices distintos são adjacentes.)	
+		bool resp = true;
+		for (int i=0;i<numVertice;i++){
+			for (int j=i+1;j<numVertice;j++){
+				if (isAresta(i,j)==false){
+					resp = false;
+					j = numVertice;
+					i = numVertice;
 				}
 			}
 		}
@@ -620,19 +664,20 @@ public:
 	//--------------------------------------------------------------------
 	bool isEuleriano()
 	{
-		bool resp = 1;
+		bool resp = true;
 		if (isConexo() == true)
 		{
-			for (int i = 1; i < numVertice && resp!=0; i++)
+			for (int i = 0; i < numVertice; i++)
 			{
 				if (getGrau(i) % 2 == 1)
 				{
-					resp = 0;
+					resp = false;
 				}
 			}
 
 		}
-
+		if(isGrafoNulo())
+		{resp=false;}
 		return resp;
 
 	}
@@ -640,25 +685,20 @@ public:
 	//--------------------------------------------------------------------
 	// isUnicursal: Retorna true se o grafo for unicursal.
 	//--------------------------------------------------------------------
+
 	bool isUnicursal()
 	{
-		int grauImpar = 0;
-		bool resp = false;
-		if (isConexo() == true)
-		{
-			for (int i = 1; i < numVertice; i++)
-			{
-				if (getGrau(i) % 2 != 0)
-				{
-					resp = false;
-					//i=numVertice;
-				}
-
-			}
-
+		//Conexo e com exatamente 2 vértices de grau ímpar.
+		bool resp = true;
+		int cont = 0;
+		for (int i = 0; i < numVertice; i++){
+			if (getGrau(i) % 2 != 0)
+				cont++;
 		}
-		return resp;
+		if (cont != 2 || isConexo() == false)
+			{resp = false;}
 
+		return resp;
 	}
 
 	//--------------------------------------------------------------------
@@ -788,7 +828,9 @@ int main(int argc, char **argv)
 
 	while (g->lerGrafo() == true)
 	{
+		//g->imprimeInfoGrafo();
 		g->imprimir();
+		//g->imprimeNumVerticeAresta();
 		//g->imprimirVerticeAresta();
 		//g->imprimirPendenteAndIsolado();
 		//g->imprimirGrauVertice(0);
